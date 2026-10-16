@@ -5,6 +5,20 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.0] - 2026-10-17
+
+### Added
+
+- `/efficiency` slash command that replays the current session's durable event
+  log and reports the model-vs-tool-vs-idle split, the sleep-poll count, and
+  how many waits the guard has blocked.
+- `lib/metrics.js` dependency-free core: `computeSessionMetrics` (step/turn
+  replay, model/tool/sleep attribution, token sums) and `renderReport`.
+- Sleep-poll detection now runs over `tool/ptc-dispatch` events, so it works in
+  PTC mode where `bash` runs nested inside `run_code`; `tool/call`/`tool/result`
+  pairing is kept for native mode.
+- Live interception counter keyed by agent (denied calls emit no `tool/result`).
+
 ## [0.1.1] - 2026-10-17
 
 ### Fixed

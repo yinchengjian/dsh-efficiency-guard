@@ -1,6 +1,6 @@
 # dsh-efficiency-guard
 
-A [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) plugin that removes the dominant source of dead time in long agent sessions: **blind foreground `sleep` polling**.
+A [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) plugin that removes the dominant source of dead time in long agent sessions — blind foreground `sleep` polling — and reports where each session's wall-clock actually went with a `/efficiency` command.
 
 ## Why this exists
 
@@ -16,6 +16,7 @@ This plugin fixes the *behavior*: it teaches the background-first recipe in the 
 
 - **System-prompt section** (`efficiency:budget`, order 990, just ahead of the bash tool description) stating the budget facts and the recipe: background long commands, batch independent calls with `Promise.all`, never foreground-sleep.
 - **`tools/pre-execute` guard** on the `bash` tool: a command whose foreground `sleep` exceeds `minSleepSeconds` (default 20 s) is denied with corrective feedback. `run_in_background: true` is always allowed, so real work is pushed onto the non-blocking path.
+- **`/efficiency` slash command**: replays the current session's durable event log and reports the model-vs-tool-vs-idle split, the sleep-poll count, and how many waits the guard has blocked. Type `/efficiency` in the chat input at any time.
 
 ## Install
 
@@ -23,7 +24,7 @@ Install a pinned release by git tag, the same way `dsh-workbuddy-connect` is
 installed:
 
 ```sh
-dsh plugin --profile web add "github:yinchengjian/dsh-efficiency-guard#v0.1.1"
+dsh plugin --profile web add "github:yinchengjian/dsh-efficiency-guard#v0.2.0"
 ```
 
 then list it in the profile's bundles in `package.json`:
@@ -35,7 +36,7 @@ then list it in the profile's bundles in `package.json`:
 and rebuild/restart the web profile. The plugin ships a `cordis.patch.yml`
 that inserts itself, so listing it in `bundles` is all that is required.
 
-Pin a specific tag (`#v0.1.1`) rather than `main` so a breaking change never
+Pin a specific tag (`#v0.2.0`) rather than `main` so a breaking change never
 lands silently. Release tags are named `v<version>` matching `package.json`.
 
 ## Configuration
@@ -66,5 +67,6 @@ pnpm test   # node --test test/
 
 - Commands containing a heredoc (`<<`) are never inspected, because text written into a script file is not a foreground wait.
 - Only `sleep` at a command position (start, or after `;`/`&&`/`||`/`|`/`(`/`then`/`do`/`{`) is matched; quoted literals and `time.sleep(...)` are ignored.
-- This plugin addresses *behavior*. The other half of the fix is *budget*: raising the 120 s ceilings is a profile-config change, not a plugin concern.
+- The `/efficiency` report reads the **durable** session log (`session.ownEvents()`), so it survives restarts and never loses history; only the interception counter is live, because a denied call emits no `tool/result` event. In PTC mode the sleep-poll detection runs over `tool/ptc-dispatch` events (nested `bash` calls), not the top-level `run_code`.
+- This plugin addresses *behavior*. The other half of the fix is *budget*: raising the 120 s ceilings (`ptc-runtime` for the `run_code` outer budget, `bash-sandbox` for the inner command) is a profile-config change, not a plugin concern.
 
