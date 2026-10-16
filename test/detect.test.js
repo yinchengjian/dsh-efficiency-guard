@@ -60,6 +60,11 @@ test("allowPatterns exempts a command", () => {
   assert.ok(inspectSleepCall({ name: "bash", arguments: { command: "sleep 60" } }, cfg));
 });
 
+test("resolveGuardConfig rejects a missing config with a clear error", () => {
+  assert.throws(() => resolveGuardConfig(undefined), /resolveGuardConfig needs an object/);
+  assert.throws(() => resolveGuardConfig(null), /resolveGuardConfig needs an object/);
+});
+
 test("resolveGuardConfig fails loud on bad input", () => {
   const base = { enabled: true, guardSleep: true, minSleepSeconds: 20, toolNames: ["bash"], allowPatterns: [] };
   assert.throws(() => resolveGuardConfig({ ...base, minSleepSeconds: 0 }), /minSleepSeconds/);

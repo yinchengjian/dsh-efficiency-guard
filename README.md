@@ -23,7 +23,7 @@ Install a pinned release by git tag, the same way `dsh-workbuddy-connect` is
 installed:
 
 ```sh
-dsh plugin --profile web add "github:yinchengjian/dsh-efficiency-guard#v0.1.0"
+dsh plugin --profile web add "github:yinchengjian/dsh-efficiency-guard#v0.1.1"
 ```
 
 then list it in the profile's bundles in `package.json`:
@@ -35,7 +35,7 @@ then list it in the profile's bundles in `package.json`:
 and rebuild/restart the web profile. The plugin ships a `cordis.patch.yml`
 that inserts itself, so listing it in `bundles` is all that is required.
 
-Pin a specific tag (`#v0.1.0`) rather than `main` so a breaking change never
+Pin a specific tag (`#v0.1.1`) rather than `main` so a breaking change never
 lands silently. Release tags are named `v<version>` matching `package.json`.
 
 ## Configuration
