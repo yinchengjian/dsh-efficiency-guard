@@ -1,0 +1,8 @@
+test/
+verify/
+scripts/
+node_modules/
+.git/
+.github/
+*.log
+.DS_Store

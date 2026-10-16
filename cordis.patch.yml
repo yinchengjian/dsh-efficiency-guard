@@ -1,0 +1,14 @@
+# dsh-efficiency-guard bundle patch.
+#
+# Applied as one insert over the profile root. The user's own
+# $DSH_HOME/profiles/<name>/cordis.patch.yml can then address this row by id
+# ("efficiency-guard") to retune it, e.g.
+#
+#   - id: efficiency-guard
+#     config:
+#       minSleepSeconds: 60
+#
+- insert:
+    - id: efficiency-guard
+      # Must be the installed package name; the loader imports this specifier.
+      name: "dsh-efficiency-guard"
