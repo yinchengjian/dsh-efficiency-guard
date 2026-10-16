@@ -7,12 +7,10 @@
 import { apply } from "../lib/index.js";
 
 // --- minimal mock cordis context ---
-function makeCtx(events) {
+function makeCtx() {
   const ctx = {
     _handlers: {},
     _commands: [],
-    _sessions: { get: () => ({ ownEvents: () => events ?? [] }) },
-    get(name) { return name === "sessions" ? ctx._sessions : undefined; },
     inject(names, cb) {
       const deps = {};
       if (names.includes("systemPrompt")) deps.systemPrompt = ctx.systemPrompt;
@@ -68,10 +66,11 @@ const events = [
   ev('step/end', 5100, { turn: 1, step: 1 }),
   ev('turn/end', 5100, { turn: 1, reason: 'stop' }),
 ];
-const ctxEvents = makeCtx(events);
+const ctxEvents = makeCtx();
 apply(ctxEvents, undefined);
 const cmd2 = ctxEvents._commands[0];
-const res = await cmd2.handler({ agent: { sessionId: 's1' } });
+const agentWithSession = { session: { ownEvents: () => events } };
+const res = await cmd2.handler({ agent: agentWithSession });
 check(res.kind === 'success', '/efficiency returns success');
 check(res.text.includes('模型生成'), 'report shows model time');
 check(res.text.includes('sleep 空转'), 'report shows sleep idle');
@@ -79,9 +78,9 @@ check(/1 次/.test(res.text), 'report counts the one sleep call');
 check(/1 次/.test(res.text) && res.text.includes('拦截前台 sleep : 0'), 'interception counter is 0 without deny');
 
 // 4) interception counter reflects a real deny (same agent object identity).
-const ctxDeny = makeCtx(events);
+const ctxDeny = makeCtx();
 apply(ctxDeny, undefined);
-const agent = { sessionId: 's1' };
+const agent = { session: { ownEvents: () => events } };
 const pe = ctxDeny._handlers['tools/pre-execute'];
 await pe({ name: 'bash', arguments: { command: 'sleep 115' }, agent }, async () => ({ kind: 'allow' }));
 const res2 = await ctxDeny._commands[0].handler({ agent });

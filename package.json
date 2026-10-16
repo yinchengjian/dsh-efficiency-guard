@@ -1,6 +1,6 @@
 {
   "name": "dsh-efficiency-guard",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "DSH plugin that keeps long-running work off the foreground wait path: teaches the background-first recipe and denies blind foreground sleep polling that burns the tool-call budget.",
   "type": "module",
   "main": "lib/index.js",
