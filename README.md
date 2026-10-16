@@ -19,17 +19,24 @@ This plugin fixes the *behavior*: it teaches the background-first recipe in the 
 
 ## Install
 
+Install a pinned release by git tag, the same way `dsh-workbuddy-connect` is
+installed:
+
 ```sh
-dsh plugin --profile web add file:/path/to/dsh-efficiency-guard
+dsh plugin --profile web add "github:yinchengjian/dsh-efficiency-guard#v0.1.0"
 ```
 
-then add it to the profile's bundles in `package.json`:
+then list it in the profile's bundles in `package.json`:
 
 ```json
 "dsh": { "profile": { "bundles": ["@deepseek-ai/dsh-base", "@deepseek-ai/dsh-web-app", "dsh-efficiency-guard"] } }
 ```
 
-and rebuild/restart the web profile. The plugin ships a `cordis.patch.yml` that inserts itself, so listing it in `bundles` is all that is required.
+and rebuild/restart the web profile. The plugin ships a `cordis.patch.yml`
+that inserts itself, so listing it in `bundles` is all that is required.
+
+Pin a specific tag (`#v0.1.0`) rather than `main` so a breaking change never
+lands silently. Release tags are named `v<version>` matching `package.json`.
 
 ## Configuration
 
