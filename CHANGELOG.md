@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.2] - 2026-10-17
+
+### Fixed
+
+- DSH 0.2.1-rc.2 skipped this plugin as incompatible: the `dsh-system-prompt`
+  and `dsh-tools` peers were pinned to `0.2.0-rc.2` and dsh matches exact
+  peer versions. They now pin `0.2.1-rc.2`, and `cordis` follows the core's
+  `^4.0.5`. No code changed: the contracts this plugin uses (`systemPrompt`
+  `section`/`getSectionOrder`, the `tools/pre-execute` guard, and
+  `commands.register`) are unchanged in 0.2.1-rc.2 apart from additive
+  optional fields.
+
 ## [0.2.1] - 2026-10-17
 
 ### Fixed
